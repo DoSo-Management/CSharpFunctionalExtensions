@@ -70,10 +70,14 @@ namespace CSharpFunctionalExtensions
             if (obj == null)
                 return false;
 
-            if (GetUnproxiedType(this) != GetUnproxiedType(obj))
-                return false;
+            var thisType = GetUnproxiedType(this);
+            var objType = GetUnproxiedType(obj);
 
-            var valueObject = (ValueObject)obj;
+            if (!thisType.IsSubclassOf(objType) && !objType.IsSubclassOf(thisType))
+                if (GetUnproxiedType(this) != GetUnproxiedType(obj))
+                    return false;
+
+            var valueObject = (ValueObject) obj;
 
             return GetEqualityComponents().SequenceEqual(valueObject.GetEqualityComponents());
         }
@@ -103,7 +107,7 @@ namespace CSharpFunctionalExtensions
             if (thisType != otherType)
                 return string.Compare(thisType.ToString(), otherType.ToString(), StringComparison.Ordinal);
 
-            var other = (ValueObject)obj;
+            var other = (ValueObject) obj;
 
             object[] components = GetEqualityComponents().ToArray();
             object[] otherComponents = other.GetEqualityComponents().ToArray();
